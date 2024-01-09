@@ -1,0 +1,218 @@
+
+#include <iostream>
+
+class BThree_element {
+private:
+	int value;
+	BThree_element* child_l = nullptr;
+	BThree_element* child_r = nullptr;
+	BThree_element* parent = nullptr;
+
+public:
+	BThree_element(int value) {
+		this->set_value(value);
+	}
+
+	BThree_element(int value, BThree_element* parent) {
+		this->set_value(value);
+		this->set_parent(parent);
+	}
+
+	void set_value(int value) {
+		this->value = value;
+	}
+	void set_child_l(BThree_element* value) {
+		this->child_l = value;
+	}
+	void set_child_r(BThree_element* value) {
+		this->child_r = value;
+	}
+
+	void set_parent(BThree_element* value) {
+		this->parent = value;
+	}
+
+	int get_value(int value) {
+		return this->value;
+	}
+	BThree_element* get_child_l() {
+		return this->child_l;
+	}
+	BThree_element* get_child_r() {
+		return this->child_r;
+	}
+
+	BThree_element* get_parent() {
+		return this->parent;
+	}
+};
+
+class BThree {
+private:
+	BThree_element* head_element = nullptr;
+
+public:
+	BThree(int value) {
+		BThree_element* new_child = new BThree_element(value, nullptr);
+		head_element = new_child;
+	}
+
+	void set_node(std::string path, int value) {
+		BThree_element* current = head_element;
+
+		for (char c : path) {
+			if (c == '0') {
+				BThree_element* next_element = current->get_child_l();
+				if (next_element == nullptr) {
+					BThree_element* new_child = new BThree_element(value, current);
+					current->set_child_l(new_child);
+					return;
+				}
+
+				current = next_element;
+			}
+			else {
+				BThree_element* next_element = current->get_child_r();
+				if (next_element == nullptr) {
+					BThree_element* new_child = new BThree_element(value, current);
+					current->set_child_r(new_child);
+					return;
+				}
+
+				current = next_element;
+			}
+		}
+
+		current->set_value(value);
+	}
+	
+
+
+};
+
+
+class List_element {
+private:
+	int value;
+	List_element* next = nullptr;
+	List_element* previous = nullptr;
+
+public:
+	void set_value(int value) {
+		this->value = value;
+	}
+	void set_next(List_element* value) {
+		this->next = value;
+	}
+	void set_previous(List_element* value) {
+		this->previous = value;
+	}
+
+	int get_value() {
+		return this->value;
+	}
+	List_element* get_next() {
+		return this->next;
+	}
+	List_element* get_previous() {
+		return this->previous;
+	}
+
+	List_element(int value) {
+		this->value = value;
+	}
+	List_element(int value, List_element* next, List_element* previous) {
+		this->value = value;
+		this->next = next;
+		this->previous = previous;
+	}
+};
+
+class List {
+private:
+	List_element* head_element = nullptr;
+	List_element* tail_element = nullptr;
+
+public:
+	~List() {
+		List_element* current_element = head_element;
+		List_element* prev_element = nullptr;
+
+		while (current_element) {
+			prev_element = current_element;
+			current_element = current_element->get_next();
+			delete prev_element;
+		}
+	}
+
+	void push(int value) {
+		if (head_element == nullptr) {
+			List_element* e = new List_element(value, nullptr, nullptr);
+			head_element = e;
+			tail_element = e;
+			return;
+		}
+
+		List_element* e = new List_element(value, nullptr, tail_element);
+		tail_element->set_next(e);
+		tail_element = e;
+	}
+	int pop() {
+		if (head_element == nullptr) {
+			throw;
+		}
+
+		int ov = tail_element->get_value();
+		tail_element = tail_element->get_previous();
+
+		if (tail_element != nullptr) {
+			tail_element->set_next(nullptr);
+		}
+		else {
+			head_element = nullptr;
+		}
+
+		return ov;
+	}
+
+	void push_b(int value) {
+		if (head_element == nullptr) {
+			List_element* e = new List_element(value, nullptr, nullptr);
+			head_element = e;
+			tail_element = e;
+			return;
+		}
+
+		List_element* e = new List_element(value, head_element, nullptr);
+		head_element->set_previous(e);
+		head_element = e;
+	}
+	int pop_b() {
+		if (head_element == nullptr) {
+			throw;
+		}
+
+		int ov = head_element->get_value();
+		head_element = head_element->get_next();
+
+		if (head_element != nullptr) {
+			head_element->set_previous(nullptr);
+		}
+		else {
+			tail_element = nullptr;
+		}
+
+		return ov;
+	}
+};
+
+int main() {
+
+	BThree bt(1);
+
+	bt.set_node("0", 2);
+	bt.set_node("1", 3);
+
+
+	return 0;
+}
